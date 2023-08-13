@@ -43,4 +43,20 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+    Mux16(a=x, b[0..15]=false, sel=zx, out=zdx); //zdx - zeroed x?
+    Not16(in=zdx, out=notx);                 
+    Mux16(a=zdx, b=notx, sel=nx, out=ndx);      //choose whether ot use x or not x
+    
+    Mux16(a=y, b[0..15]=false, sel=zy, out=zdy);    //do the same for y
+    Not16(in=zdy, out=noty);
+    Mux16(a=zdy, b=noty, sel=ny, out=ndy);
+
+    Add16(a=ndx, b=ndy, out=xpy); //x+y
+    And16(a=ndx, b=ndy, out=xay); //x&y
+    Mux16(a=xay, b=xpy, sel=f,out=fxy); //choose function
+
+    Not16(in=fxy, out=nfxy);
+    Mux16(a=fxy, b=nfxy, sel=no, out=fout); //choose function of xy, or inverse function of xy
+
+    Or16(a=fout,b[0..15]=false,out=out);
 }
